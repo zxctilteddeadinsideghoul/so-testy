@@ -1,11 +1,15 @@
 // WelcomePage Component (unchanged from previous implementation)
+import { useNavigate } from "react-router-dom";
+
 const WelcomePage = () => {
+    const navigate = useNavigate();
+
     return (
         <main className="flex-grow h-full w-full px-4 py-8">
             {/* Hero Section with Image Placeholder */}
             <section className="relative h-64 md:h-80 bg-cover bg-center mb-12 w-full"
-                     style={{backgroundImage: `url('https://placehold.co/1200x400/007BFF/FFFFFF?text=Welcome+to+So+Testy ')`}}>
-                <div className="absolute inset-0 bg-black opacity-30 flex flex-col items-center justify-center">
+                     style={{backgroundImage: `url('https://placehold.co/1200x400/007BFF/FFFFFF?text=')`}}>
+                <div className="absolute inset-0 bg-black opacity-100 flex flex-col items-center justify-center">
                     <h2 className="text-3xl md:text-4xl font-bold text-white text-center max-w-2xl">
                         Create, Take, and Share Interactive Tests
                     </h2>
@@ -21,6 +25,7 @@ const WelcomePage = () => {
                     <h3 className="text-2xl font-bold text-gray-800 text-center mb-8">Create New Test</h3>
                     <div className="flex flex-wrap justify-center gap-6">
                         <button
+                            onClick={() => navigate("/create")}
                             className="px-8 py-4 bg-yellow-500 text-white font-semibold rounded-lg shadow-md hover:bg-yellow-600 transition duration-300 transform hover:scale-105">
                             Start Creating
                         </button>

@@ -1,0 +1,163 @@
+import React, { useState } from 'react';
+
+export default function TestSettingsChoice() {
+    const [selectedSubject, setSelectedSubject] = useState('English');
+    const [customTopic, setCustomTopic] = useState('');
+    const [selectedDifficulty, setSelectedDifficulty] = useState('');
+    const [isSubmitted, setIsSubmitted] = useState(false);
+
+    const subjects = [
+        'English',
+        'Math',
+        'Science',
+        'History',
+        'Literature',
+        'Programming',
+        'Geography',
+        'Economics',
+        'Philosophy'
+    ];
+
+    const difficultyLevels = {
+        English: ['A1', 'A2', 'B1', 'B2', 'C1', 'C2'],
+        default: ['Easy', 'Medium', 'Hard']
+    };
+
+    const placeholders = {
+        English: 'e.g. Past tenses, Vocabulary, Reading comprehension',
+        Math: 'e.g. Algebra, Calculus, Geometry',
+        Science: 'e.g. Biology, Chemistry, Physics',
+        History: 'e.g. World Wars, Ancient Civilizations, Modern History',
+        Literature: 'e.g. Shakespeare, Poetry Analysis, Literary Devices',
+        Programming: 'e.g. JavaScript, Python, Algorithms',
+        Geography: 'e.g. Climate Zones, Map Reading, Cultural Regions',
+        Economics: 'e.g. Microeconomics, Macroeconomics, Financial Markets',
+        Philosophy: 'e.g. Ethics, Metaphysics, Political Philosophy'
+    };
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        if (selectedSubject && customTopic.trim() && selectedDifficulty) {
+            setIsSubmitted(true);
+            console.log('Selected Subject:', selectedSubject);
+            console.log('Topic:', customTopic);
+            console.log('Difficulty:', selectedDifficulty);
+        }
+    };
+
+    const getDifficultyOptions = () => {
+        return difficultyLevels[selectedSubject] || difficultyLevels.default;
+    };
+
+    return (
+        <div className="min-h-screen bg-gradient-to-br from-indigo-900 to-blue-800 flex items-center justify-center p-4">
+            <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full p-8 transform transition-all duration-300 hover:scale-105">
+                <h1 className="text-3xl font-bold text-indigo-700 mb-2">Select Test Parameters</h1>
+                <p className="text-gray-600 mb-8">Choose subject, topic, and difficulty level for automated test generation</p>
+
+                <form onSubmit={handleSubmit} className="space-y-6">
+                    <div>
+                        <label htmlFor="subject" className="block text-sm font-medium text-gray-700 mb-2">
+                            Select Subject
+                        </label>
+                        <div className="relative">
+                            <select
+                                id="subject"
+                                value={selectedSubject}
+                                onChange={(e) => {
+                                    setSelectedSubject(e.target.value);
+                                    setCustomTopic('');
+                                    setSelectedDifficulty('');
+                                }}
+                                className="block w-full pl-4 pr-10 py-3 text-base border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 rounded-lg appearance-none bg-gray-50"
+                                required
+                            >
+                                <option value="" disabled>Select a subject</option>
+                                {subjects.map((subject) => (
+                                    <option key={subject} value={subject}>{subject}</option>
+                                ))}
+                            </select>
+                            <div className="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none">
+                                <svg className="h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label htmlFor="custom-topic" className="block text-sm font-medium text-gray-700 mb-2">
+                            Enter Custom Topic
+                        </label>
+                        <input
+                            type="text"
+                            id="custom-topic"
+                            value={customTopic}
+                            onChange={(e) => setCustomTopic(e.target.value)}
+                            placeholder={placeholders[selectedSubject]}
+                            className="block w-full pl-4 pr-4 py-3 text-base border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 rounded-lg bg-gray-50"
+                            required
+                        />
+                    </div>
+
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                            Difficulty Level
+                        </label>
+                        <div className="grid grid-cols-3 gap-3">
+                            {getDifficultyOptions().map((level) => {
+                                const colors = {
+                                    A1: 'bg-green-600',
+                                    A2: 'bg-yellow-600',
+                                    B1: 'bg-blue-500',
+                                    B2: 'bg-indigo-700',
+                                    C1: 'bg-purple-600',
+                                    C2: 'bg-pink-600',
+                                    Easy: 'bg-green-600',
+                                    Medium: 'bg-yellow-600',
+                                    Hard: 'bg-red-600'
+                                };
+
+                                return (
+                                    <button
+                                        key={level}
+                                        type="button"
+                                        onClick={() => setSelectedDifficulty(level)}
+                                        className={`px-4 py-2 text-sm font-medium text-white rounded-lg transition-all transform hover:scale-105 focus:outline-none ${
+                                            selectedDifficulty === level
+                                                ? `${colors[level]} shadow-lg`
+                                                : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                                        }`}
+                                    >
+                                        {level}
+                                    </button>
+                                );
+                            })}
+                        </div>
+                    </div>
+
+                    <button
+                        type="submit"
+                        disabled={!selectedSubject || !customTopic.trim() || !selectedDifficulty}
+                        className={`w-full py-3 px-4 rounded-lg text-white font-medium transition-all transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 ${
+                            selectedSubject && customTopic.trim() && selectedDifficulty
+                                ? 'bg-blue-500 hover:bg-indigo-700'
+                                : 'bg-gray-400 cursor-not-allowed'
+                        }`}
+                    >
+                        Start Test
+                    </button>
+                </form>
+
+                {isSubmitted && (
+                    <div className="mt-6 p-4 bg-blue-50 rounded-lg text-blue-800 text-center animate-fadeIn">
+                        <p className="font-medium">Test started! You selected:</p>
+                        <p className="mt-1">Subject: <span className="font-bold">{selectedSubject}</span></p>
+                        <p className="mt-1">Topic: <span className="font-bold">{customTopic}</span></p>
+                        <p className="mt-1">Difficulty: <span className="font-bold">{selectedDifficulty}</span></p>
+                    </div>
+                )}
+            </div>
+        </div>
+    );
+}
