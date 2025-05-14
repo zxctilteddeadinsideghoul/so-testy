@@ -4,6 +4,7 @@ export default function TestSettingsChoice() {
     const [selectedSubject, setSelectedSubject] = useState('English');
     const [customTopic, setCustomTopic] = useState('');
     const [selectedDifficulty, setSelectedDifficulty] = useState('');
+    const [questionsCount, setQuestionsCount] = useState(5);
     const [isSubmitted, setIsSubmitted] = useState(false);
 
     const subjects = [
@@ -37,11 +38,12 @@ export default function TestSettingsChoice() {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        if (selectedSubject && customTopic.trim() && selectedDifficulty) {
+        if (selectedSubject && customTopic.trim() && selectedDifficulty && questionsCount >= 2) {
             setIsSubmitted(true);
             console.log('Selected Subject:', selectedSubject);
             console.log('Topic:', customTopic);
             console.log('Difficulty:', selectedDifficulty);
+            console.log('Number of Tests:', questionsCount);
         }
     };
 
@@ -136,11 +138,32 @@ export default function TestSettingsChoice() {
                         </div>
                     </div>
 
+                    <div>
+                        <label htmlFor="questions-count" className="block text-sm font-medium text-gray-700 mb-2">
+                            Number of Questions (2-20)
+                        </label>
+                        <div className="flex items-center space-x-4">
+                            <input
+                                type="range"
+                                id="questions-count"
+                                min="2"
+                                max="20"
+                                value={questionsCount}
+                                onChange={(e) => setQuestionsCount(parseInt(e.target.value))}
+                                className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
+                            />
+                            <span className="w-12 text-center font-medium text-gray-700">{questionsCount}</span>
+                        </div>
+                        <div className="mt-1 text-xs text-gray-500">
+                            Generate between 2 to 20 tests for this topic
+                        </div>
+                    </div>
+
                     <button
                         type="submit"
-                        disabled={!selectedSubject || !customTopic.trim() || !selectedDifficulty}
+                        disabled={!selectedSubject || !customTopic.trim() || !selectedDifficulty || questionsCount < 2}
                         className={`w-full py-3 px-4 rounded-lg text-white font-medium transition-all transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 ${
-                            selectedSubject && customTopic.trim() && selectedDifficulty
+                            selectedSubject && customTopic.trim() && selectedDifficulty && questionsCount >= 2
                                 ? 'bg-blue-500 hover:bg-indigo-700'
                                 : 'bg-gray-400 cursor-not-allowed'
                         }`}
@@ -155,6 +178,7 @@ export default function TestSettingsChoice() {
                         <p className="mt-1">Subject: <span className="font-bold">{selectedSubject}</span></p>
                         <p className="mt-1">Topic: <span className="font-bold">{customTopic}</span></p>
                         <p className="mt-1">Difficulty: <span className="font-bold">{selectedDifficulty}</span></p>
+                        <p className="mt-1">Number of Tests: <span className="font-bold">{questionsCount}</span></p>
                     </div>
                 )}
             </div>
