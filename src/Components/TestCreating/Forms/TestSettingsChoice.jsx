@@ -42,19 +42,26 @@ export default function TestSettingsChoice() {
 
 	const handleRequest = async () => {
 		const prompt = `Create a test with the following parameters:
-      Subject: ${selectedSubject}
-      Topic: ${customTopic}
-      Difficulty: ${selectedDifficulty}
-      Number of questions: ${questionsCount}
-      
-      The format of each question should include:
-      - The question itself
-      - Answer options (if required)
-      
-      The test should match the specified difficulty level and be relevant to the given topic.`;
+    Subject: ${selectedSubject}
+    Topic: ${customTopic}
+    Difficulty: ${selectedDifficulty}
+    Number of questions: ${questionsCount}
+
+    Return the result as a JSON array of questions in this format:
+    [
+      {
+        "id": 1,
+        "question": "QUESTION",
+        "options": ["OPTION1", "OPTION2", ..., "OPTIONN"],
+        "correctAnswer": "ANSWER"
+      }
+    ]
+
+    Make sure the test matches the specified difficulty level and is relevant to the given topic.
+    Do NOT include any extra text outside the JSON.`;
 
 		const API_KEY =
-			"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";
+			"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";
 		const API_URL = "https://openrouter.ai/api/v1/chat/completions ";
 
 		try {
@@ -84,11 +91,18 @@ export default function TestSettingsChoice() {
 
 			const data = await response.json();
 
-			// Assuming the AI response is in data.choices[0].message.content
-			setTestResult(data.choices[0].message.content);
+			// Парсим JSON из ответа
+			let parsedTest;
+			try {
+				parsedTest = JSON.parse(data.choices[0].message.content);
+			} catch (parseError) {
+				throw new Error("AI returned invalid JSON.");
+			}
+
+			setTestResult(parsedTest);
+			console.log(parsedTest);
 			setIsSubmitted(true);
-			console.log(response);
-			return data;
+			return parsedTest;
 		} catch (error) {
 			console.error("Error occurred:", error);
 			setError(`Failed to load test. ${error.message}`);
@@ -115,11 +129,7 @@ export default function TestSettingsChoice() {
 				console.log("Number of Tests:", questionsCount);
 			}
 
-			handleRequest();
-			if (!isLoading) {
-				console.log("not loading anymore");
-				console.log(testResult);
-			}
+			console.log(handleRequest());
 		}
 	};
 
