@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { buildCurl } from "../Actions/Request";
 
-export default function TestSettingsChoice() {
+export default function TestSettingsChoice({ onSubmitSuccess }) {
 	const [selectedSubject, setSelectedSubject] = useState("English");
 	const [customTopic, setCustomTopic] = useState("");
 	const [selectedDifficulty, setSelectedDifficulty] = useState("");
@@ -61,7 +61,7 @@ export default function TestSettingsChoice() {
     Do NOT include any extra text outside the JSON.`;
 
 		const API_KEY =
-			"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";
+			"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";
 		const API_URL = "https://openrouter.ai/api/v1/chat/completions ";
 
 		try {
@@ -112,24 +112,19 @@ export default function TestSettingsChoice() {
 		}
 	};
 
-	const handleSubmit = (e) => {
+	const handleSubmit = async (e) => {
 		e.preventDefault();
+
 		if (
 			selectedSubject &&
 			customTopic.trim() &&
 			selectedDifficulty &&
 			questionsCount >= 2
 		) {
-			setIsSubmitted(true);
-			{
-				// Debug
-				console.log("Selected Subject:", selectedSubject);
-				console.log("Topic:", customTopic);
-				console.log("Difficulty:", selectedDifficulty);
-				console.log("Number of Tests:", questionsCount);
+			const result = await handleRequest();
+			if (result && onSubmitSuccess) {
+				onSubmitSuccess(result); // вернули результат в родительский компонент
 			}
-
-			console.log(handleRequest());
 		}
 	};
 
@@ -279,18 +274,46 @@ export default function TestSettingsChoice() {
 							!selectedSubject ||
 							!customTopic.trim() ||
 							!selectedDifficulty ||
-							questionsCount < 2
+							questionsCount < 2 ||
+							isLoading
 						}
 						className={`w-full py-3 px-4 rounded-lg text-white font-medium transition-all transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 ${
 							selectedSubject &&
 							customTopic.trim() &&
 							selectedDifficulty &&
-							questionsCount >= 2
+							questionsCount >= 2 &&
+							!isLoading
 								? "bg-blue-500 hover:bg-indigo-700"
 								: "bg-gray-400 cursor-not-allowed"
 						}`}
 					>
-						Start Test
+						{isLoading ? (
+							<div className="flex items-center justify-center space-x-2">
+								<svg
+									className="animate-spin h-5 w-5 text-white"
+									xmlns="http://www.w3.org/2000/svg"
+									fill="none"
+									viewBox="0 0 24 24"
+								>
+									<circle
+										className="opacity-25"
+										cx="12"
+										cy="12"
+										r="10"
+										stroke="currentColor"
+										strokeWidth="4"
+									></circle>
+									<path
+										className="opacity-75"
+										fill="currentColor"
+										d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
+									></path>
+								</svg>
+								<span>Loading...</span>
+							</div>
+						) : (
+							"Start Test"
+						)}
 					</button>
 				</form>
 
